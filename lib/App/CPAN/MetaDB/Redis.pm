@@ -1,5 +1,11 @@
 package App::CPAN::MetaDB::Redis;
 
+=head1 NAME
+
+App::CPAN::MetaDB
+
+=cut
+
 use strict;
 use warnings;
 
@@ -9,28 +15,28 @@ sub new {
 
     my($class, %opts) = @_;
 
-	return bless {
-		db => Redis->new(server => $opts{server})
-	}, $class;
+    return bless {
+        db => Redis->new(server => $opts{server})
+    }, $class;
 
 }
 
 sub find_package {
-	my($self, $package_name) = @_;
+    my($self, $package_name) = @_;
 
-	return $self->{db}->get($package_name);
+    return $self->{db}->get($package_name);
 }
 
 sub update_package {
 
-	my($self, %data) = @_;
+    my($self, %data) = @_;
 
-	$self->{db}->set( 
-		$data{name} => 
-			sprintf "---\ndistfile: %s\nversion: %s\n",
+    $self->{db}->set( 
+        $data{name} => 
+            sprintf "---\ndistfile: %s\nversion: %s\n",
                 $data{path},
                 $data{version}
-	);
+    );
 
 }
 

@@ -46,8 +46,8 @@ my $app = sub {
         my ($version, $package) = $env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/;
         my $data = $db->find_package($package);
         if($data) {
-			$response = $data;
-		} else {
+            $response = $data;
+        } else {
             $status   = 404;
             $response = "";
         }
@@ -79,10 +79,10 @@ C<.minicpanrc>.
 sub new {
     my($class, %opts) = @_;
     %config = %opts;
-	$db = App::CPAN::MetaDB::Redis->new(%{$config{db}});
+    $db = App::CPAN::MetaDB::Redis->new(%{$config{db}});
     return bless {
-		ua => LWP::UserAgent->new,
-	}, $class;
+        ua => LWP::UserAgent->new,
+    }, $class;
 }
 
 =head2 app
@@ -122,12 +122,12 @@ sub fetch_packages {
     # First 9 or so lines are header information...
     foreach (10..$#packages) {
         my($name, $version, $path) = split /\s+/, $packages[$_];
-		$self->{db}->update_package(
-			name    => $name,
-			version => $version,
-			path    => $path
-		);
-	}
+        $self->{db}->update_package(
+            name    => $name,
+            version => $version,
+            path    => $path
+        );
+    }
 
 }
 
