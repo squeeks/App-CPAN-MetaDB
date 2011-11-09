@@ -174,7 +174,7 @@ L<http://search.cpan.org/dist/App-CPAN-MetaDB/>
 
 =head1 ACKNOWLEDGEMENTS
 
-Tatsuhiko Miyagawa for L<cpanminus>.
+Tatsuhiko Miyagawa for L<App::cpanminus>.
 
 =head1 LICENSE AND COPYRIGHT
 
