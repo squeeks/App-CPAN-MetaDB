@@ -44,7 +44,7 @@ my $app = sub {
 
     } elsif($env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/) {
         my ($version, $package) = $env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/;
-        my $data = $db->find_package($package);
+        my $data = $db->_find_package($package);
         if($data) {
             $response = $data;
         } else {
@@ -122,7 +122,7 @@ sub fetch_packages {
     # First 9 or so lines are header information...
     foreach (10..$#packages) {
         my($name, $version, $path) = split /\s+/, $packages[$_];
-        $self->{db}->update_package(
+        $self->{db}->_update_package(
             name    => $name,
             version => $version,
             path    => $path
@@ -174,6 +174,7 @@ L<http://search.cpan.org/dist/App-CPAN-MetaDB/>
 
 =head1 ACKNOWLEDGEMENTS
 
+Tatsuhiko Miyagawa for L<cpanminus>.
 
 =head1 LICENSE AND COPYRIGHT
 
