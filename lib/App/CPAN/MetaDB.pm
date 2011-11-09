@@ -2,7 +2,7 @@ package App::CPAN::MetaDB;
 
 =head1 NAME
 
-App::CPAN::MetaDB
+App::CPAN::MetaDB - Provide CPAN metadata for cpanminus clients
 
 =head1 VERSION
 
