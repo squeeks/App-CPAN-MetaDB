@@ -1,4 +1,8 @@
 Revision history for App-CPAN-MetaDB
 
+0.02    2011-11-10
+        * Added support for Memcached using Cache::Memcached::Fast
+        * Added support for pure memory storage
+
 0.01    2011-11-09
-	Initial release
+        Initial release
