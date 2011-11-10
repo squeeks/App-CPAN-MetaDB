@@ -2,6 +2,7 @@ Changes
 lib/App/CPAN/MetaDB.pm
 lib/App/CPAN/MetaDB/Redis.pm
 lib/App/CPAN/MetaDB/Memory.pm
+lib/App/CPAN/MetaDB/Memcached.pm
 Makefile.PL
 MANIFEST
 README
