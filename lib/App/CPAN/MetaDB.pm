@@ -15,7 +15,30 @@ our $VERSION = '0.01';
 =head1 SYNOPSIS
 
 This is a L<Plack> application that grabs CPAN metadata and serves it to
-L<cpanminus> clients. 
+L<cpanminus> clients. You can serve cpanminus clients by creating a C<app.psgi> 
+application:
+
+    #!/usr/bin/env plackup
+
+    use strict;
+    use warnings;
+
+    use Plack::Builder;
+
+    use App::CPAN::MetaDB;
+    use App::CPAN::MetaDB::Memcached;
+
+    my $metadb = App::CPAN::MetaDB->new(
+        mirror  => 'http://cpan.cpantesters.org', # use the most suitable (fast) mirror
+        storage => App::CPAN::MetaDB::Memcached->new({
+            servers => ['127.0.0.1:11211']
+        })
+    );
+
+    builder {
+        mount "/" => $metadb->app;
+    }
+
 
 =cut
 
