@@ -28,7 +28,7 @@ sub new {
     my($class, %opts) = @_;
 
     return bless {
-        db => Redis->new(server => $opts{server})
+        db => Redis->new(%opts)
     }, $class;
 
 }
