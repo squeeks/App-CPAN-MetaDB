@@ -26,10 +26,7 @@ use warnings;
 use IO::Uncompress::Gunzip 'gunzip';
 use LWP::UserAgent;
 
-use App::CPAN::MetaDB::Redis;
-
 my %config;
-my $db;
 
 my $app = sub {
     my $env = shift;
@@ -44,7 +41,7 @@ my $app = sub {
 
     } elsif($env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/) {
         my ($version, $package) = $env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/;
-        my $data = $db->_find_package($package);
+        my $data = $config{storage}->_find_package($package);
         if($data) {
             $response = $data;
         } else {
@@ -73,13 +70,17 @@ The CPAN mirror to fetch the metadata from. This should not be a L<CPAN::Mini>
 mirror unless you explicitly fetching /modules/02packages.details.txt.gz in your
 C<.minicpanrc>.
 
+=item * storage
+
+The storage engine you wish to use, along with any required arguments.
+
 =back
 
 =cut
 sub new {
     my($class, %opts) = @_;
     %config = %opts;
-    $db = App::CPAN::MetaDB::Redis->new(%{$config{db}});
+
     return bless {
         ua => LWP::UserAgent->new,
     }, $class;
@@ -122,7 +123,7 @@ sub fetch_packages {
     # First 9 or so lines are header information...
     foreach (10..$#packages) {
         my($name, $version, $path) = split /\s+/, $packages[$_];
-        $self->{db}->_update_package(
+        $config{storage}->_update_package(
             name    => $name,
             version => $version,
             path    => $path
@@ -140,8 +141,8 @@ Squeeks, C<< <squeek at cpan.org> >>
 Please report any bugs or feature requests to C<bug-app-cpan-metadb at
 rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-CPAN-MetaDB>.  I will be
-notified, and then you'll automatically be notified of progress on your bug as I
-make changes.
+notified, and then you'll automatically be notified of progress on your bug as
+I make changes.
 
 =head1 SUPPORT
 
