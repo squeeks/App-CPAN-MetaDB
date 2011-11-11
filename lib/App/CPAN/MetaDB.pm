@@ -47,6 +47,7 @@ use strict;
 use warnings;
 
 use IO::Uncompress::Gunzip 'gunzip';
+use YAML;
 use LWP::UserAgent;
 
 my %config;
@@ -150,6 +151,44 @@ sub fetch_packages {
             name    => $name,
             version => $version,
             path    => $path
+        );
+    }
+
+}
+
+=head2 fetch_recent
+
+Grabs metadata from the mirror containing the changes from the past day or so.
+
+=cut
+sub fetch_recent {
+    my($self) = shift;
+
+    my $response = $self->{ua}->get($config{mirror}."/authors/RECENT-1d.yaml");
+    if (!$response->is_success) {
+        #TODO Logging
+        return undef;
+    }
+
+    my $yaml;
+    eval { $yaml = Load($response->content); };
+
+    if(!$yaml || $@) {
+		return undef;
+    }
+
+    for my $recent(@{$yaml->{recent}}) {
+        next if($recent->{path} !~/\.tar\.gz$/);
+        $recent->{path} =~s!^id/!!;
+        my @dist = split '-', (split '/', $recent->{path})[-1];
+        $dist[-1] =~s/\.tar\.gz$//;
+        $recent->{version} = pop @dist;
+        $recent->{name}    = join '::', @dist;
+
+        $config{storage}->_update_package(
+            name    => $recent->{name},
+            version => $recent->{version},
+            path    => $recent->{path}
         );
     }
 
