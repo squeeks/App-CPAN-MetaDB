@@ -2,7 +2,7 @@ package App::CPAN::MetaDB::Memcached;
 
 =head1 NAME
 
-App::CPAN::MetaDB::Memcached
+App::CPAN::MetaDB::Memcached - Store metadata in memcached
 
 =head1 SYNOPSIS
 

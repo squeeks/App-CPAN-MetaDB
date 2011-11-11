@@ -2,7 +2,7 @@ package App::CPAN::MetaDB::Memory;
 
 =head1 NAME
 
-App::CPAN::MetaDB::Memory - stash data in memory.
+App::CPAN::MetaDB::Memory - Stash data in memory.
 
 =head1 SYNOPSIS
 
@@ -20,6 +20,8 @@ my %dists;
 =head1 CONSTRUCTION
 
 =head2 new
+
+Takes no arguments.
 
 =cut
 sub new {

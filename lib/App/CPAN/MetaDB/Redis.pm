@@ -2,7 +2,7 @@ package App::CPAN::MetaDB::Redis;
 
 =head1 NAME
 
-App::CPAN::MetaDB::Redis
+App::CPAN::MetaDB::Redis - Store metadata in a Redis database
 
 =head1 SYNOPSIS
 
