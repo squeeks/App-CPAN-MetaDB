@@ -70,8 +70,16 @@ my $app = sub {
         if($data) {
             $response = $data;
         } else {
-            $status   = 404;
-            $response = "";
+            $data = _fetch_metacpan(undef, $package);
+            if($data) {
+                $meta{storage}->_update_package(%{$data});
+                $response = sprintf "---\ndistfile: %s\nversion: %s\n",
+                    $data->{path},
+                    $data->{version};
+            } else {
+                $status   = 404;
+                $response = "";
+            }
         }
     } else {
         $status   = 404;
@@ -105,7 +113,7 @@ The storage engine you wish to use, along with any required arguments.
 sub new {
     my($class, %opts) = @_;
     %meta = %opts;
-	$meta{ua} = LWP::UserAgent->new;
+    $meta{ua} = LWP::UserAgent->new;
     return bless {}, $class;
 }
 
@@ -195,29 +203,29 @@ sub fetch_recent {
 
 sub _fetch_metacpan {
     my($self, $dist) = @_;
-	
-	$dist=~s/::/-/g;
-	
-	my $response = $meta{ua}->get("http://api.metacpan.org/release/".$dist);
+    
+    $dist=~s/::/-/g;
+    
+    my $response = $meta{ua}->get("http://api.metacpan.org/release/".$dist);
     if (!$response->is_success) {
         #TODO Logging
         return undef;
     }
 
-	my $json;
-	eval { $json = from_json($response->content); };
-	if(!$json || $@) {
-		return undef;
-	}
+    my $json;
+    eval { $json = from_json($response->content); };
+    if(!$json || $@) {
+        return undef;
+    }
 
-	($json->{path}) = $json->{download_url} =~/^.*id\/(.*)$/;
-	$json->{distribution} =~s/-/::/;
+    ($json->{path}) = $json->{download_url} =~/^.*id\/(.*)$/;
+    $json->{distribution} =~s/-/::/;
 
-	return {
-		name    => $json->{distribution},
-		version => $json->{version},
-		path    => $json->{path}
-	};
+    return {
+        name    => $json->{distribution},
+        version => $json->{version},
+        path    => $json->{path}
+    };
 
 }
 
