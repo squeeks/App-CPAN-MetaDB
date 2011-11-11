@@ -329,7 +329,9 @@ status code if the package is not found.</dd>
 </dl>
 
 <div id="footer">
-This is yet another CPAN Meta DB, created by Squeeks. Thanks, miyagawa.
+This is yet another CPAN Meta DB, created by Squeeks. Thanks, miyagawa. You can
+find its code <a href="https://github.com/squeeks/App-CPAN-MetaDB">on
+Github</a>.
 </div>
 
 </div>
