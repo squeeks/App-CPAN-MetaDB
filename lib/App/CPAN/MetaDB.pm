@@ -48,6 +48,7 @@ use warnings;
 
 use IO::Uncompress::Gunzip 'gunzip';
 use YAML;
+use JSON qw/from_json/;
 use LWP::UserAgent;
 
 my %config;
@@ -174,7 +175,7 @@ sub fetch_recent {
     eval { $yaml = Load($response->content); };
 
     if(!$yaml || $@) {
-		return undef;
+        return undef;
     }
 
     for my $recent(@{$yaml->{recent}}) {
@@ -191,6 +192,34 @@ sub fetch_recent {
             path    => $recent->{path}
         );
     }
+
+}
+
+sub _fetch_metacpan {
+    my($self, $dist) = @_;
+	
+	$dist=~s/::/-/g;
+	
+	my $response = $self->{ua}->get("http://api.metacpan.org/release/".$dist);
+    if (!$response->is_success) {
+        #TODO Logging
+        return undef;
+    }
+
+	my $json;
+	eval { $json = from_json($response->content); };
+	if(!$json || $@) {
+		return undef;
+	}
+
+	($json->{path}) = $json->{download_url} =~/^.*id\/(.*)$/;
+	$json->{distribution} =~s/-/::/;
+
+	return {
+		name    => $json->{distribution},
+		version => $json->{version},
+		path    => $json->{path}
+	};
 
 }
 
