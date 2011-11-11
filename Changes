@@ -1,5 +1,9 @@
 Revision history for App-CPAN-MetaDB
 
+0.03    2011-11-11
+        * Included support for fetching daily changes 
+        * Added metacpan fallback
+
 0.02    2011-11-10
         * Added support for Memcached using Cache::Memcached::Fast
         * Added support for pure memory storage
