@@ -51,7 +51,7 @@ use YAML;
 use JSON qw/from_json/;
 use LWP::UserAgent;
 
-my %config;
+my %meta;
 
 my $app = sub {
     my $env = shift;
@@ -66,7 +66,7 @@ my $app = sub {
 
     } elsif($env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/) {
         my ($version, $package) = $env->{PATH_INFO} =~/v([0-9\.]+)\/package\/(.*)/;
-        my $data = $config{storage}->_find_package($package);
+        my $data = $meta{storage}->_find_package($package);
         if($data) {
             $response = $data;
         } else {
@@ -104,11 +104,9 @@ The storage engine you wish to use, along with any required arguments.
 =cut
 sub new {
     my($class, %opts) = @_;
-    %config = %opts;
-
-    return bless {
-        ua => LWP::UserAgent->new,
-    }, $class;
+    %meta = %opts;
+	$meta{ua} = LWP::UserAgent->new;
+    return bless {}, $class;
 }
 
 =head2 app
@@ -132,7 +130,7 @@ sub fetch_packages {
 
     my $decompressed;
     my @packages;
-    my $response = $self->{ua}->get($config{mirror}."/modules/02packages.details.txt.gz");
+    my $response = $meta{ua}->get($meta{mirror}."/modules/02packages.details.txt.gz");
     if ($response->is_success) {
         gunzip \$response->content => \$decompressed;
     } else {
@@ -148,7 +146,7 @@ sub fetch_packages {
     # First 9 or so lines are header information...
     foreach (10..$#packages) {
         my($name, $version, $path) = split /\s+/, $packages[$_];
-        $config{storage}->_update_package(
+        $meta{storage}->_update_package(
             name    => $name,
             version => $version,
             path    => $path
@@ -165,7 +163,7 @@ Grabs metadata from the mirror containing the changes from the past day or so.
 sub fetch_recent {
     my($self) = shift;
 
-    my $response = $self->{ua}->get($config{mirror}."/authors/RECENT-1d.yaml");
+    my $response = $meta{ua}->get($meta{mirror}."/authors/RECENT-1d.yaml");
     if (!$response->is_success) {
         #TODO Logging
         return undef;
@@ -186,7 +184,7 @@ sub fetch_recent {
         $recent->{version} = pop @dist;
         $recent->{name}    = join '::', @dist;
 
-        $config{storage}->_update_package(
+        $meta{storage}->_update_package(
             name    => $recent->{name},
             version => $recent->{version},
             path    => $recent->{path}
@@ -200,7 +198,7 @@ sub _fetch_metacpan {
 	
 	$dist=~s/::/-/g;
 	
-	my $response = $self->{ua}->get("http://api.metacpan.org/release/".$dist);
+	my $response = $meta{ua}->get("http://api.metacpan.org/release/".$dist);
     if (!$response->is_success) {
         #TODO Logging
         return undef;
