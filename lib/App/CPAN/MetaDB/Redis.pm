@@ -33,6 +33,17 @@ sub new {
 
 }
 
+=head2 auth($password)
+
+Authenticate to the server with the specified password. This needs to be called
+B<before> it is passed to the L<App::CPAN::MetaDB> constructor.
+
+=cut
+sub auth {
+	my($self, $password) = shift;
+	return $self->{db}->auth($password);
+}
+
 sub _find_package {
     my($self, $package_name) = @_;
 
