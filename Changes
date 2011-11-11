@@ -1,5 +1,9 @@
 Revision history for App-CPAN-MetaDB
 
+0.04    2011-11-11
+	* Documentation fixes
+	* Added support for Redis Authentication
+
 0.03    2011-11-11
         * Included support for fetching daily changes 
         * Added metacpan fallback
